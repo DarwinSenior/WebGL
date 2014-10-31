@@ -93,40 +93,99 @@ var buffers = {
 
 function initBuffers(){
 	var vertices = [
-		0.0, 0.0, 0.0,
-		1.0, 0.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 0.0, 1.0
+		// Front face
+            -1.0, -1.0,  1.0,
+             1.0, -1.0,  1.0,
+             1.0,  1.0,  1.0,
+            -1.0,  1.0,  1.0,
+
+            // Back face
+            -1.0, -1.0, -1.0,
+            -1.0,  1.0, -1.0,
+             1.0,  1.0, -1.0,
+             1.0, -1.0, -1.0,
+
+            // Top face
+            -1.0,  1.0, -1.0,
+            -1.0,  1.0,  1.0,
+             1.0,  1.0,  1.0,
+             1.0,  1.0, -1.0,
+
+            // Bottom face
+            -1.0, -1.0, -1.0,
+             1.0, -1.0, -1.0,
+             1.0, -1.0,  1.0,
+            -1.0, -1.0,  1.0,
+
+            // Right face
+             1.0, -1.0, -1.0,
+             1.0,  1.0, -1.0,
+             1.0,  1.0,  1.0,
+             1.0, -1.0,  1.0,
+
+            // Left face
+            -1.0, -1.0, -1.0,
+            -1.0, -1.0,  1.0,
+            -1.0,  1.0,  1.0,
+            -1.0,  1.0, -1.0,
 	];
 	buffers.v = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.v);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 	buffers.v.item_size = 3;
-	buffers.v.num_items = 4;
+	buffers.v.num_items = 24;
 
 	var colors = [
+		//Front
 		0.5, 0.5, 0.5, 1.0,
 		1.0, 0.0, 0.0, 1.0,
 		0.0, 0.0, 1.0, 1.0,
-		0.0, 1.0, 1.0, 1.0
+		0.0, 1.0, 1.0, 1.0,
+		//Back
+		0.5, 0.5, 0.5, 1.0,
+		1.0, 0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0, 1.0,
+		0.0, 1.0, 1.0, 1.0,
+		//Top
+		0.5, 0.5, 0.5, 1.0,
+		1.0, 0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0, 1.0,
+		0.0, 1.0, 1.0, 1.0,
+		//Bottom
+		0.5, 0.5, 0.5, 1.0,
+		1.0, 0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0, 1.0,
+		0.0, 1.0, 1.0, 1.0,
+		//Left
+		0.5, 0.5, 0.5, 1.0,
+		1.0, 0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0, 1.0,
+		0.0, 1.0, 1.0, 1.0,
+		//Right
+		0.5, 0.5, 0.5, 1.0,
+		1.0, 0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0, 1.0,
+		0.0, 1.0, 1.0, 1.0,
 	];
 	buffers.c = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.c);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 	buffers.c.item_size = 4;
-	buffers.c.num_items = 4;
+	buffers.c.num_items = 24;
 
 	var indies = [
-		0, 1, 2,
-		0, 1, 3,
-		0, 2, 3,
-		1, 2, 3
+		0, 1, 2,      0, 2, 3,    // Front face
+		4, 5, 6,      4, 6, 7,    // Back face
+		8, 9, 10,     8, 10, 11,  // Top face
+		12, 13, 14,   12, 14, 15, // Bottom face
+		16, 17, 18,   16, 18, 19, // Right face
+		20, 21, 22,   20, 22, 23  // Left face
 	];
 	buffers.i = gl.createBuffer();
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.i);
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indies), gl.STATIC_DRAW);
 	buffers.i.item_size = 1;
-	buffers.i.num_items = 12;
+	buffers.i.num_items = 36;
 }
 
 function drawScene(){
@@ -137,7 +196,7 @@ function drawScene(){
 
 	mat4.identity(uniforms.MVMatrix);
 
-	mat4.translate(uniforms.MVMatrix, [-1.5, 0.0, -7.0]);
+	mat4.translate(uniforms.MVMatrix, [0.0, 0.0, -7.0]);
 	mat4.rotate(uniforms.MVMatrix, degToRad(rotation), [1, 1, 1]);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.v);
