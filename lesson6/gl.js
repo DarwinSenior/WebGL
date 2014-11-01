@@ -120,11 +120,10 @@ function initTexture(){
 var buffers = {
 	v : null,
 	i : null,
-	t : null
+	t : null,
 }
 
 function initBuffers(){
-	
 	buffers.v = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffers.v);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -142,6 +141,7 @@ function initBuffers(){
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texture_coords), gl.STATIC_DRAW);
 	buffers.t.item_size = 2;
 	buffers.t.num_items = 24;
+
 }
 
 var rotation={
