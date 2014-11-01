@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<script type="text/javascript" src="../glMatrix-0.9.5.min.js"></script>
+		<script id="shader-vs" type="x-shader/x-vertex" src="vertexshader.shader"></script>
+		<script id="shader-fs" type="x-shader/x-fragment" src="fragmentshader.shader"></script>
+		<script type="text/javascript" src="data.js"></script>
+		<script type="text/javascript" src="gl.js"></script>
+		<source id="texture" src="tardis.jpg">
+	</head>
+	<body onload="webGLStart();">
+		<canvas id="GLDRAW" style="border: none;" width="500" height="500"></canvas>
+		<p>Controls : up/down left/right for rotation<br/>command+= zoom in and command+- zoom out</p>
+		<div>
+			<p>
+				ambient: R:<input type="text" id="ambientR" value="1.0"> 
+						 G:<input type="text" id="ambientG" value="1.0">
+						 B:<input type="text" id="ambientB" value="1.0">
+			</p>
+			<p>
+				reflect: R:<input type="text" id="reflectR" value="1.0"> 
+						 G:<input type="text" id="reflectG" value="1.0">
+						 B:<input type="text" id="reflectB" value="1.0">
+			</p>
+			<p>
+				direction: X:<input type="text" id="directionX" value="0.0"> 
+						   Y:<input type="text" id="directionY" value="0.0">
+						   Z:<input type="text" id="directionZ" value="0.0">
+			</p>
+			<button id="submit_button">Submit</button>
+		</div>
+	</body>
+</html>
