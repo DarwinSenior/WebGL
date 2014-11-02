@@ -74,7 +74,8 @@ function initShaderProgram(){
 	shaderProgram.PMatrix = gl.getUniformLocation(shaderProgram, "P");
 	shaderProgram.MVMatrix = gl.getUniformLocation(shaderProgram, "MV");
 	shaderProgram.NMatrix = gl.getUniformLocation(shaderProgram, "N");
-	shaderProgram.sampler = gl.getUniformLocation(shaderProgram, "envSampler");
+	shaderProgram.envsampler = gl.getUniformLocation(shaderProgram, "envSampler");
+	shaderProgram.sampler = gl.getUniformLocation(shaderProgram, "sampler");
 	shaderProgram.ambientColor = gl.getUniformLocation(shaderProgram, "ambient");
 	shaderProgram.lightDirection = gl.getUniformLocation(shaderProgram, "light_direction");
 	shaderProgram.reflectColor = gl.getUniformLocation(shaderProgram, "reflect");
@@ -104,9 +105,36 @@ function setLightUniforms(){
 	gl.uniform3fv(shaderProgram.reflectColor, new Float32Array(lightPara.reflect));
 }
 
-var texture;
+function handleLoadedTexture(texture, image){
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	gl.generateMipmap(gl.TEXTURE_2D);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+}
+
+var tardisTexture;
+function initTexture(){
+	tardisTexture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_2D, tardisTexture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+              new Uint8Array([255, 0, 0, 255]));
+	gl.bindTexture(gl.TEXTURE_2D, null);
+
+	var image = new Image();
+	image.src = document.getElementById("maptexture").src;
+	image.onload = function() {
+		handleLoadedTexture(tardisTexture, image);
+	}
+}
+
+var env_texture;
 var TEXTURE_FACES;
-function handleLoadedTexture(texture, image, face){
+function handleLoadedCubeTexture(texture, image, face){
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
 	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 	gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -128,23 +156,14 @@ function initCubeMap(){
 		gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
 		gl.TEXTURE_CUBE_MAP_NEGATIVE_Z 
 		];
-	texture = gl.createTexture();
-	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+	env_texture = gl.createTexture();
+	gl.bindTexture(gl.TEXTURE_CUBE_MAP, env_texture);
 	for (var i=0; i<6; i++){
 		gl.texImage2D(TEXTURE_FACES[i], 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
               new Uint8Array([255, 0, 0, 255]));
 	}
 	gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
 
-	// for (var i=0; i<6; i++){
- //    	images[i] = new Image();
- //    	images[i].src = document.getElementById("texture").src;
-
-	// 	images[i].onload = function() {
-	// 		handleLoadedTexture(texture, images[i], TEXTURE_FACES[i]);
-	// 		console.log("get the textures");
-	// 	}
-	// }
 	for (var i=0; i<6; i++){
 		images[i] = new Image();
 		images[i].src = document.getElementById("texture").src+(i+1)+".png";
@@ -152,18 +171,11 @@ function initCubeMap(){
 			ready += 1;
 			if (ready===6){
 				for (var j=0; j<6; j++){
-					handleLoadedTexture(texture, images[j], TEXTURE_FACES[j]);
+					handleLoadedCubeTexture(env_texture, images[j], TEXTURE_FACES[j]);
 				}
 			}
 		}
 	}
-	// image = new Image();
-	// image.src = document.getElementById("texture").src;
-	// image.onload = function(){
-	// 	for (var i=0; i<6; i++){
-	// 		handleLoadedTexture(texture, image, TEXTURE_FACES[i]);
-	// 	}
-	// }
 }
 
 
@@ -278,8 +290,12 @@ function drawScene(){
 							gl.FLOAT, false, 0, 0);
 
 	gl.activeTexture(gl.TEXTURE3);
-	gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-	gl.uniform1i(shaderProgram.sampler, 3);
+	gl.bindTexture(gl.TEXTURE_CUBE_MAP, env_texture);
+	gl.uniform1i(shaderProgram.envsampler, 3);
+
+	gl.activeTexture(gl.TEXTURE0);
+	gl.bindTexture(gl.TEXTURE_2D, tardisTexture);
+	gl.uniform1i(shaderProgram.sampler, 0);
 
 	setMatrixUniforms();
 	setLightUniforms();
@@ -333,7 +349,7 @@ function webGLStart(){
 	initGL(canvas);
 	initShaderProgram();
 	initBuffers();
-	//initTexture();
+	initTexture();
 	initCubeMap();
 
 	document.onkeyup = handleKeyUp;

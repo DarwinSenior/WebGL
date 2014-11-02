@@ -13,8 +13,10 @@ uniform vec3 light_direction;
 varying vec3 light_weight;
 varying vec3 view_normals;
 varying vec3 view_vertices;
+varying vec3 m_v;
 
 void main(void){
+	m_v = v;
 	gl_Position = P*MV*vec4(v, 1.0);
 	view_vertices = (MV*vec4(v, 1.0)).xyz;
 	view_normals = N*n;
