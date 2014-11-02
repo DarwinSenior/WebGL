@@ -166,7 +166,7 @@ function initCubeMap(){
 
 	for (var i=0; i<6; i++){
 		images[i] = new Image();
-		images[i].src = document.getElementById("texture").src+(i+1)+".png";
+		images[i].src = document.getElementById("texture").src;
 		images[i].onload = function(){
 			ready += 1;
 			if (ready===6){

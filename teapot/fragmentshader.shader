@@ -17,5 +17,5 @@ void main(void){
 	vec2 texture_coord = vec2( m_v.z-floor(m_v.z), atan(m_v.x/m_v.y)-floor(atan(m_v.x/m_v.y)));
 	vec4 texture_color = texture2D(sampler, texture_coord);
 	texture_color = vec4(texture_color.rgb*light_weight, texture_color.a);
-	gl_FragColor = texture_color*1.0+reflect_color*0.5;
+	gl_FragColor = texture_color*1.0+reflect_color*1.0;
 }
